@@ -3,8 +3,6 @@ package modules
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
-	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -12,21 +10,7 @@ import (
 	"github.com/chromedp/chromedp"
 )
 
-func Chrome() {
-	b, err := ioutil.ReadFile("login.txt")
-	if err != nil {
-		fmt.Println("Не удалось открыть файл 'login.txt'.", err)
-		os.Exit(0)
-	}
-
-	auth := strings.SplitN(string(b), "\n", -1)
-
-	summaryUpper(auth[0], auth[1])
-	fmt.Printf("\nОжидаем следующего запуска:\n")
-	fmt.Printf("Завершено!\n\n")
-}
-
-func summaryUpper(login, password string) {
+func Chrome(inputLogin, inputPassword string) {
 	opts := []chromedp.ExecAllocatorOption{
 		chromedp.Flag("headless", false),
 		chromedp.Flag("blink-settings", "imagesEnabled=false"),
@@ -45,8 +29,8 @@ func summaryUpper(login, password string) {
 		chromedp.WaitVisible(`//*[@data-qa="expand-login-by-password"]`, chromedp.NodeVisible),
 		chromedp.Click(`//*[@data-qa="expand-login-by-password"]`, chromedp.NodeVisible),
 
-		chromedp.SendKeys(`//*[@data-qa="login-input-username"]`, login),
-		chromedp.SendKeys(`//*[@data-qa="login-input-password"]`, password),
+		chromedp.SendKeys(`//*[@data-qa="login-input-username"]`, inputLogin),
+		chromedp.SendKeys(`//*[@data-qa="login-input-password"]`, inputPassword),
 		chromedp.Click(`//*[@data-qa="account-login-submit"]`, chromedp.NodeVisible),
 		chromedp.Sleep(4*time.Second),
 		chromedp.OuterHTML(`html`, &data, chromedp.BySearch),
@@ -66,6 +50,6 @@ func summaryUpper(login, password string) {
 			chromedp.Sleep(2*time.Second),
 		)
 		resumeName := strings.SplitN(strings.SplitN(i, ">", -1)[1], "<", -1)[0]
-		fmt.Printf("Резюме '%s' поднято в поиске! (Логин: %s)\n", resumeName, login)
+		fmt.Printf("Резюме '%s' поднято в поиске! (Логин: %s)\n", resumeName, inputLogin)
 	}
 }

@@ -12,10 +12,10 @@ import (
 	"main.go/modules"
 )
 
-func updateTime(clock *widget.Label, i int) {
+func updateTime(clock *widget.Label, i int, inputLogin, inputPassword string) {
 	if i == 0 {
 		clock.SetText("Работаем!")
-		modules.Chrome()
+		modules.Chrome(inputLogin, inputPassword)
 	} else {
 		formatted := "До старта осталось: " + strconv.Itoa(i) + " секунд!"
 		clock.SetText(formatted)
@@ -38,10 +38,9 @@ func main() {
 		desk.SetSystemTrayMenu(m)
 	}
 	content := container.NewVBox(inputLogin, inputPassword, widget.NewButton("Сохранить и запустить", func() {
-		modules.WriteFile(inputLogin.Text, inputPassword.Text)
 		clock := widget.NewLabel("")
 		i := 14500
-		updateTime(clock, i)
+		updateTime(clock, i, inputLogin.Text, inputPassword.Text)
 		myWindow.SetContent(clock)
 
 		go func() {
@@ -50,7 +49,7 @@ func main() {
 					i = 14500
 				} else {
 					i--
-					updateTime(clock, i)
+					updateTime(clock, i, inputLogin.Text, inputPassword.Text)
 				}
 			}
 
