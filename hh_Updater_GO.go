@@ -63,7 +63,7 @@ func summaryUpper(login, password string) {
 	if err != nil {
 		fmt.Println("Обновлено ранее.")
 	}
-	re := regexp.MustCompile(`data-qa="resume-title">(.*?)</span>`)
+	re := regexp.MustCompile(`Поднять в поиске`)
 	resume := re.FindAllString(data, -1)
 	for _, i := range resume {
 		clone, cancel := chromedp.NewContext(ctx)
